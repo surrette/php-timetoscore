@@ -1,4 +1,6 @@
-<?php
+<?
+require('./../includes/db.php');
+
 function calcStartTime($period, $time, $diffMin)
 {
 	//calculate the estimated video start time for highlight based on period and game clock
