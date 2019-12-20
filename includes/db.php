@@ -160,4 +160,26 @@ function insertPlayerTags($values) {
 
     return $result;
 }
+
+// does our prod php let us destructure?
+function formatGameName($game) {
+    ['HomeTeam' => $home, 'AwayTeam' => $away, 'StartTime' => $dateTime] = $game;
+    $time = formatGameTime($game);
+    return "$away @ $home";
+}
+
+function formatGameDate($game) {
+    $date = date_create($game['StartTime']);
+    return date_format($date, 'Y-m-d');
+}
+
+function formatGameTime($game) {
+    $date = date_create($game['StartTime']);
+    return date_format($date, 'g:ia');
+}
+
+function formatRinkName($game) {
+    $rink = str_replace('San Jose', '', $game['Surface']);
+    return "$rink rink";
+}
 ?>

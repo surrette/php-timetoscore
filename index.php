@@ -190,7 +190,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"> -->
     <link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/assets/css/app.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <link rel="stylesheet" href="/assets/css/icon.css" />
     <title><?=$my_team?> Hockey Videos</title>
 </head>
 
@@ -205,21 +205,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <section class="row game-viewer no-gutter">
         <header class="col-12">
-            <h2 class="text-center"><?=$viewingGame['Name']?></h2>
+            <h2 class="text-center"><?=formatGameName($viewingGame)?> <?=formatGameTime($viewingGame)?> <?=formatRinkName($viewingGame)?></h2>
         </header>
         <div class="playlist-container">
             <button type="button" class="backward nav-btn material-icons">arrow_left</button>
             <ul class="playlist col-12-xs">
             <?
             foreach ($games as $row => $game) {
-                $date = substr($game["StartTime"], 0, 10);
                 // used to highlight the game we're watching in the list
                 $className = isset($viewingGame) && $viewingGame == $game ? 'active' : '';
             ?>
                 <li class="playlist__item border text-break">
                     <a href="/?gameId=<?=$game["GameId"]?>" class="<?=$className?> d-block p-2">
                         <!-- <img src="https://i.ytimg.com/vi/<?=$game['YouTubeLink']?>/default.jpg" height="90" width="120" alt="" /> -->
-                        <span class="date"><?=$date?></span> - <?=$game['Name']?>
+                        <span class="date"><?=formatGameDate($game)?> <?=formatGameTime($game)?></span> - <?=formatGameName($game)?>
                     </a>
                 </li>
             <?
@@ -269,8 +268,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input type="hidden" class="new" name="mode" value="new" />
                 <input type="hidden" class="update" name="mode" value="update" disabled />
 
-                <div class="col-4">
-                    <input type="number" autocomplete="off" class="form-control form-control-sm" id="start" name="start" placeholder="Start (secs)" value="" min="0" required>
+                <div class="col-4 form-label-group">
+                    <input type="number" autocomplete="off" class="form-control" id="start" name="start" placeholder="Start (secs)" value="" min="0" required>
+                    <label for="start">Start (secs)</label>
                 </div>
 
                 <div class="col-4">
@@ -281,8 +281,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <button type="button" class="form-control btn-sm btn btn-secondary" onclick="seekStart()">Go to Start</button>
                 </div>
 
-                <div class="col-4">
+                <div class="col-4 form-label-group">
                     <input type="number" autocomplete="off" class="form-control form-control-sm" id="end" name="end" placeholder="End (secs)" value=""  min="10" required>
+                    <label for="End">End (secs)</label>
                 </div>
 
                 <div class="col-4">
@@ -293,8 +294,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <button type="button" class="form-control btn-sm btn btn-secondary" onclick="seekEnd()">Go to End</button>
                 </div>
 
-                <div class="col-12">
-                    <label for="type">Type</label>
+                <div class="col-12 form-label-group">
                     <select id="type" name="type" class="form-control custom-select" required>
                         <option disabled selected value="">-- select an option --</option>
                         <?
@@ -305,11 +305,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         }
                         ?>
                     </select>
+                    <label for="type">Type</label>
                 </div>
 
                 <div class="col-12 d-none" id="subtype-field">
                     <label for="subtype">SubType</label>
-                    <input type="text" autocomplete="off" class="form-control" id="subtype" name="subtype" required>
+                    <input type="text" autocomplete="off" placeholder="SubType" class="form-control" id="subtype" name="subtype" required>
                     <small class="form-text text-muted">PP, PK, penalty called, etc.</small>
                 </div>
 
@@ -320,22 +321,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
 
                 <div class="col-12 d-none" id="goal-tag-field">
-                    <label for="goal-scorer">Tags</label>
-                    <input type="text" autocomplete="off" class="form-control" id="goal-scorer" name="tags" aria-describedby="tagsHelp" placeholder="Goal scorer">
-                    <input type="text" autocomplete="off" class="form-control" name="tags" aria-describedby="tagsHelp" placeholder="1st assist">
-                    <input type="text" autocomplete="off" class="form-control" name="tags" aria-describedby="tagsHelp" placeholder="2nd assist">
+                    <div class="form-label-group">
+                        <input type="text" autocomplete="off" class="form-control" id="goal-scorer" name="tags" aria-describedby="tagsHelp" placeholder="Goal scorer">
+                        <label for="goal-scorer">Goal scorer</label>
+                    </div>
+                    <div class="form-label-group">
+                        <input type="text" autocomplete="off" class="form-control" name="tags" aria-describedby="tagsHelp" placeholder="1st assist" id="first-assist">
+                        <label for="first-assist">1st assist</label>
+                    <div class="form-label-group">
+                        <input type="text" autocomplete="off" class="form-control" name="tags" aria-describedby="tagsHelp" placeholder="2nd assist" id="second-assist">
+                        <label for="second-assist">2nd assist</label>
+                    </div>
+
                     <small id="" class="form-text text-muted">List the goal-scorer and 1st and 2nd assists</small>
                 </div>
 
                 <div class="col-12 d-none" id="name-field">
                     <label for="hName">Name</label>
                     <input type="text" autocomplete="off" class="form-control" id="hName" name="hName" value="" required>
-                    <small class="form-text text-muted">Name of the highlight, e.g. "Dummy fell down from bench"</small>
+                    <small class="form-text text-muted">Name of the highlight, e.g. "Dummy fell down a well"</small>
                 </div>
 
-                <div class="col-12">
+                <div class="col-6">
                     <button hidden="hidden" type="submit" value="update" name="update", id="update" class="form-control btn-sm btn btn-success edit">Update Highlight</button>
                     <button type="submit" value="new" name="new" id="new" class="form-control btn-sm btn btn-primary new">Save</button>
+                </div>
+                <div class="col-6">
+                    <button type="reset" class="form-control btn-sm btn btn-secondary">Cancel</button>
                 </div>
             </div>
 

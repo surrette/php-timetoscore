@@ -97,8 +97,8 @@ function verifyHighlight(highlightId, hName, start, end, type, subtype, tags){
 
 window.addEventListener('DOMContentLoaded', (event) => {
     // TODO: gonna use this?
-    var tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
+    // var tag = document.createElement('script');
+    // tag.src = "https://www.youtube.com/iframe_api";
     // document.body.appendChild(tag);
 
     // the highlight form is disabled until all the youtube crap finishes loading
@@ -168,5 +168,22 @@ filter.addEventListener('change', (evt) => {
         var type = highlight.dataset.highlightType;
         highlight.hidden = value === '' ? false : type !== value;
     });
+});
+
+var highlightType = document.getElementById('type');
+highlightType.addEventListener('change', (evt) => {
+    var target = evt.target;
+    var NONE = 'd-none';
+    if (target.value === 'Goal') {
+        var goalTags = document.getElementById('goal-tag-field');
+        goalTags.classList.remove(NONE);
+
+    }
+    else {
+        var subtype = document.getElementById('subtype-field');
+        var tags = document.getElementById('tag-field');
+        subtype.classList.remove(NONE);
+        tags.classList.remove(NONE);
+    }
 });
 })();
