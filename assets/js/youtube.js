@@ -52,12 +52,12 @@ function setEnd(){
 }
 
 function seekStart(){
-//player.seekTo(document.getElementById("start").value,true)
-seek(document.getElementById("start").value)
+    //player.seekTo(document.getElementById("start").value,true)
+    seek(document.getElementById("start").value)
 }
 
 function seekEnd(value){
-seek(document.getElementById("end").value)
+    seek(document.getElementById("end").value)
 }
 
 function seek(value){
@@ -101,20 +101,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
     // tag.src = "https://www.youtube.com/iframe_api";
     // document.body.appendChild(tag);
 
-    // the highlight form is disabled until all the youtube crap finishes loading
-    // TODO: remove this?
-    document.querySelectorAll('fieldset[disabled]').forEach(el => {
-        el.removeAttribute('disabled');
-    });
-
-
     // this is for scrolling the playlist to the correct item
     // TODO: will need to add scrollTop stuff for a vertical list
-    // this gets the anchor
-    var viewing = document.querySelector('.active');
+    var viewing = document.querySelector('.active'); // this gets the anchor
     if (viewing) {
-        // now get its container
-        viewing = viewing.parentNode;
+        viewing = viewing.parentNode; // now get its container
         viewing.parentNode.scrollLeft = viewing.offsetLeft;
     }
 });
@@ -170,20 +161,75 @@ filter.addEventListener('change', (evt) => {
     });
 });
 
-var highlightType = document.getElementById('type');
-highlightType.addEventListener('change', (evt) => {
-    var target = evt.target;
-    var NONE = 'd-none';
-    if (target.value === 'Goal') {
-        var goalTags = document.getElementById('goal-tag-field');
-        goalTags.classList.remove(NONE);
-
+// fills in some dynamic values in the rest of the highlight form
+document.getElementById('type').addEventListener('change', (evt) => {
+    const el = evt.target;
+    const value = el.value.toLowerCase();
+    const label = document.getElementById('subtype-label');
+    label.innerText = `Type of ${value}`;
+    const hiddenRows = el.form.querySelectorAll('.form-row[hidden]')
+    hiddenRows.forEach((row) => {
+        row.hidden = false;
+    });
+    const datalist = document.getElementById('subtype-values');
+    datalist.innerHTML = '';
+    let newList = document.getElementById(`${value}-subtypes`);
+    if (newList) {
+        datalist.innerHTML = newList.innerHTML;
     }
+
+
+    // enable the submit buttons
+    document.getElementById('new').disabled = false;
+    document.getElementById('update').disabled = false;
+});
+
+// handler for adding player tags to a highlight
+const template = document.querySelector('.add-template');
+const templateParent = template.parentNode;
+const GOAL_SCORER = 'Goal Scorer';
+const PRIMARY = 'Primary assist';
+const SECONDARY = 'Secondary Assist';
+document.getElementById('player-tags').addEventListener('click', (evt) => {
+    const target = evt.target;
+    if (target.type !== 'button') {
+        return;
+    }
+    const method = target.dataset.method;
+    // add a new tag
+    if (method === '+') {
+        const clone = template.cloneNode(true);
+        const input = clone.querySelector('input');
+        clone.classList.add('live')
+        templateParent.insertBefore(clone, template);
+        clone.hidden = false;
+        input.focus();
+    }
+    // delete a tag
     else {
-        var subtype = document.getElementById('subtype-field');
-        var tags = document.getElementById('tag-field');
-        subtype.classList.remove(NONE);
-        tags.classList.remove(NONE);
+        const row = target.closest('.row');
+        row.parentNode.removeChild(row);
+    }
+
+    const type = document.getElementById('type');
+    // if it's a goal, let's get all the inputs and make the placeholder text more helpful
+    if (type.value === 'Goal') {
+        const tags = templateParent.querySelectorAll('.live input');
+        tags.forEach((tag, index) => {
+            switch (index) {
+                case 0:
+                    tag.placeholder = GOAL_SCORER;
+                    break;
+                case 1:
+                    tag.placeholder = PRIMARY;
+                    break;
+                case 2:
+                    tag.placeholder = SECONDARY;
+                    break;
+                default:
+                    break;
+            }
+        });
     }
 });
 })();

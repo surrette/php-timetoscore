@@ -22,7 +22,7 @@
         <? if ($highlight["YouTubeLink"] == "PENDING") { ?>
             YouTube upload pending...
         <? } else { ?>
-            <a type="button" class="btn btn-success btn-sm" href="/?gameId=<?=$highlight['GameId']?>&highlightId=<?=$highlight['highlightId']?>">Send to YouTube</a>
+            <a class="btn btn-success btn-sm" href="/?gameId=<?=$highlight['GameId']?>&highlightId=<?=$highlight['HighlightId']?>">Send to YouTube</a>
         <? } ?>
         <a href="#player" onclick="verifyHighlight()" class="">Verify Highlight</a>
         <a href="#player" onclick="verifyHighlight()" class="">Update Highlight</a>

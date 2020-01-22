@@ -161,6 +161,22 @@ function insertPlayerTags($values) {
     return $result;
 }
 
+function getGamePlayers($id, $team) {
+    global $pdo;
+
+    $statement = $pdo->prepare('SELECT *
+                                FROM players
+                                WHERE GameId=:id
+                                AND Team=:team
+                                ORDER BY Number');
+    $statement->bindValue(':id', $id, PDO::PARAM_INT);
+    $statement->bindValue(':team', $team, PDO::PARAM_STR);
+    $statement->execute();
+    $players = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+    return $players;
+}
+
 // does our prod php let us destructure?
 function formatGameName($game) {
     ['HomeTeam' => $home, 'AwayTeam' => $away, 'StartTime' => $dateTime] = $game;

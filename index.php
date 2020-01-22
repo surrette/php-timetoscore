@@ -1,5 +1,5 @@
-<?   
-/* 
+<?
+/*
 TODO:
   * find diffs between newer prod index and this
   * icon library for form buttons and video controls
@@ -229,7 +229,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
 
         <div id="video-player" class="col-12-xs">
-            <iframe id="ytplayer" type="text/html" <?/* width="854" height="480"*/?> src="https://www.youtube.com/embed/<?=$viewingGame['YouTubeLink']?>" class=""></iframe>
+            <iframe id="ytplayer" <?/* width="854" height="480"*/?> src="https://www.youtube.com/embed/<?=$viewingGame['YouTubeLink']?>" class=""></iframe>
             <div class="video-controls text-center">
                 <button type="button" class="btn btn-info btn-sm d-none d-sm-inline" data-skip="-300">-5 min</button>
                 <button type="button" class="btn btn-info btn-sm d-none d-sm-inline" data-skip="-60">-1 min</button>
@@ -260,7 +260,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <button class="material-icons md-18" type="button" data-toggle="collapse" data-target="#edit-form" aria-expanded="true" aria-controls="edit-form">unfold_more</button>
                 </h3>
             </header>
-            <div id="edit-form" class="collapse show form-group form-row row">
+            <fieldset id="edit-form" class="collapse show">
                 <input type="hidden" name="team" value="<?=$my_team?>" />
                 <input type="hidden" name="gameId" value="<?=$gameId?>" />
                 <input type="hidden" class="" id="startPre" name="startPre" value="">
@@ -268,33 +268,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input type="hidden" class="new" name="mode" value="new" />
                 <input type="hidden" class="update" name="mode" value="update" disabled />
 
-                <div class="col-4 form-label-group">
-                    <input type="number" autocomplete="off" class="form-control" id="start" name="start" placeholder="Start (secs)" value="" min="0" required>
-                    <label for="start">Start (secs)</label>
+                <div class="form-row form-group">
+                    <div class="col-4">
+                        <input type="number" autocomplete="off" class="form-control" id="start" name="start" placeholder="Start (secs)" value="" min="0" required>
+                    </div>
+
+                    <div class="col-4">
+                        <button type="button" class="form-control btn-sm btn btn-secondary" onclick="setStart()">Set Start</button>
+                    </div>
+
+                    <div class="col-4">
+                        <button type="button" class="form-control btn-sm btn btn-secondary" onclick="seekStart()">Go to Start</button>
+                    </div>
                 </div>
 
-                <div class="col-4">
-                    <button type="button" class="form-control btn-sm btn btn-secondary" onclick="setStart()">Set Start</button>
+                <div class="form-row form-group">
+                    <div class="col-4">
+                        <input type="number" autocomplete="off" class="form-control" id="end" name="end" placeholder="End (secs)" value=""  min="10" required>
+                    </div>
+
+                    <div class="col-4">
+                        <button type="button" class="form-control btn-sm btn btn-secondary" onclick="setEnd()">Set End</button>
+                    </div>
+
+                    <div class="col-4">
+                        <button type="button" class="form-control btn-sm btn btn-secondary" onclick="seekEnd()">Go to End</button>
+                    </div>
                 </div>
 
-                <div class="col-4">
-                    <button type="button" class="form-control btn-sm btn btn-secondary" onclick="seekStart()">Go to Start</button>
-                </div>
-
-                <div class="col-4 form-label-group">
-                    <input type="number" autocomplete="off" class="form-control form-control-sm" id="end" name="end" placeholder="End (secs)" value=""  min="10" required>
-                    <label for="End">End (secs)</label>
-                </div>
-
-                <div class="col-4">
-                    <button type="button" class="form-control btn-sm btn btn-secondary" onclick="setEnd()">Set End</button>
-                </div>
-
-                <div class="col-4">
-                    <button type="button" class="form-control btn-sm btn btn-secondary" onclick="seekEnd()">Go to End</button>
-                </div>
-
-                <div class="col-12 form-label-group">
+                <div class="form-row form-group">
+                    <label for="type">Type</label>
                     <select id="type" name="type" class="form-control custom-select" required>
                         <option disabled selected value="">-- select an option --</option>
                         <?
@@ -305,51 +308,88 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         }
                         ?>
                     </select>
-                    <label for="type">Type</label>
                 </div>
 
-                <div class="col-12 d-none" id="subtype-field">
-                    <label for="subtype">SubType</label>
-                    <input type="text" autocomplete="off" placeholder="SubType" class="form-control" id="subtype" name="subtype" required>
-                    <small class="form-text text-muted">PP, PK, penalty called, etc.</small>
+                <div class="form-row form-group" hidden>
+                    <label for="subtype" id="subtype-label"></label>
+                    <input list="subtype-values" type="text" autocomplete="off" placeholder="Description of highlight" class="form-control" id="subtype" name="subtype" required>
+                    <small class="form-text text-muted">Explain the type of goal (e.g. PP, SH, EN), penalty called, great celly, etc.</small>
+                    <datalist id="subtype-values"></datalist>
+                    <datalist id="goal-subtypes">
+                        <option>EN</option>
+                        <option>PP</option>
+                        <option>SH</option>
+                        <option>ENPP</option>
+                        <option>ENSH</option>
+                        <option>5v3</option>
+                        <option>4v4</option>
+                        <option>3v3</option>
+                    </datalist>
+                    <datalist id="penalty-subtypes">
+                        <option>Body check</option>
+                        <option>Cross-check</option>
+                        <option>Delay of game</option>
+                        <option>Head contact</option>
+                        <option>High-sticking</option>
+                        <option>Holding</option>
+                        <option>Hooking</option>
+                        <option>Interference</option>
+                        <option>Kneeing</option>
+                        <option>Roughing</option>
+                        <option>Slashing</option>
+                        <option>Too many men</option>
+                        <option>Tripping</option>
+                        <option>Unsportsmanlike</option>
+                    </datalist>
                 </div>
 
-                <div class="col-12 d-none" id="tag-field">
-                    <label for="tags">Tags</label>
-                    <input type="text" autocomplete="off" class="form-control" id="tags" name="tags" aria-describedby="tagsHelp" placeholder="6,29,47" disabled>
-                    <small id="tagsHelp" class="form-text text-muted">Comma separated player numbers. For goals, list in order: G,A1,A2</small>
-                </div>
-
-                <div class="col-12 d-none" id="goal-tag-field">
-                    <div class="form-label-group">
-                        <input type="text" autocomplete="off" class="form-control" id="goal-scorer" name="tags" aria-describedby="tagsHelp" placeholder="Goal scorer">
-                        <label for="goal-scorer">Goal scorer</label>
+                <div class="form-row form-group" id="player-tags" hidden>
+                    <label for="tags" class="d-block w-100">Tag a player</label>
+                    <div class="row live">
+                        <div class="col-8">
+                            <input list="player-datalist" type="number" autocomplete="off" class="form-control" id="tags" name="tags" placeholder="Player number">
+                        </div>
+                        <div class="col-3">
+                            <button type="button" class="form-control btn-sm btn btn-success" data-method="+">+</button>
+                        </div>
                     </div>
-                    <div class="form-label-group">
-                        <input type="text" autocomplete="off" class="form-control" name="tags" aria-describedby="tagsHelp" placeholder="1st assist" id="first-assist">
-                        <label for="first-assist">1st assist</label>
-                    <div class="form-label-group">
-                        <input type="text" autocomplete="off" class="form-control" name="tags" aria-describedby="tagsHelp" placeholder="2nd assist" id="second-assist">
-                        <label for="second-assist">2nd assist</label>
+                    <div class="row mt-2 add-template" hidden>
+                        <div class="col-8">
+                            <input list="player-datalist" type="number" autocomplete="off" class="form-control" name="tags" placeholder="Player number">
+                        </div>
+                        <div class="col-3">
+                            <button type="button" class="form-control btn-sm btn btn-secondary rounded-circle" data-method="-">&times;</button>
+                        </div>
                     </div>
-
-                    <small id="" class="form-text text-muted">List the goal-scorer and 1st and 2nd assists</small>
+                    <small class="text-muted form-text">For goals, list in order: goal, primary, secondary</small>
+                    <datalist id="player-datalist">
+                    <?
+                    $players = getGamePlayers($gameId, $my_team);
+                    foreach ($players as $playerRecord => $player) {
+                    ?>
+                        <option value="<?=$player['Number']?>"><?=$player['Number']?> - <?=$player['Name']?></option>
+                    <?
+                    }
+                    ?>
+                    </datalist>
                 </div>
 
-                <div class="col-12 d-none" id="name-field">
+                <div class="form-row form-group" id="name-field" hidden>
                     <label for="hName">Name</label>
                     <input type="text" autocomplete="off" class="form-control" id="hName" name="hName" value="" required>
                     <small class="form-text text-muted">Name of the highlight, e.g. "Dummy fell down a well"</small>
                 </div>
 
-                <div class="col-6">
-                    <button hidden="hidden" type="submit" value="update" name="update", id="update" class="form-control btn-sm btn btn-success edit">Update Highlight</button>
-                    <button type="submit" value="new" name="new" id="new" class="form-control btn-sm btn btn-primary new">Save</button>
+                <div class="form-row form-group">
+                    <div class="col-6">
+                        <button hidden type="submit" value="update" name="update" id="update" class="form-control btn-sm btn btn-success edit">Update Highlight</button>
+                        <button type="submit" value="new" name="new" id="new" class="form-control btn-sm btn btn-primary new" disabled>Save</button>
+                    </div>
+                    <div class="col-6">
+                        <button type="reset" class="form-control btn-sm btn btn-secondary">Cancel</button>
+                    </div>
                 </div>
-                <div class="col-6">
-                    <button type="reset" class="form-control btn-sm btn btn-secondary">Cancel</button>
-                </div>
-            </div>
+            </fieldset>
 
         </form>
     </section>
@@ -358,7 +398,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <h3 class="text-center">Highlights</h3>
         <div class="row">
             <select id="highlight-filter" name="highlightFilter" class="form-control custom-select">
-                <option value="" selected>-- Filter highlights --</option>
+                <option value="" selected>-- All highlights --</option>
                 <?
                 foreach ($highlightTypes as $highlightType => $class) {
                 ?>
