@@ -204,8 +204,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </section>
 
     <section class="row game-viewer no-gutter">
-        <header class="col-12">
-            <h2 class="text-center"><?=formatGameName($viewingGame)?> <?=formatGameTime($viewingGame)?> <?=formatRinkName($viewingGame)?></h2>
+        <header class="col-12 text-center">
+            <h3><?=formatGameName($viewingGame)?></h3>
+            <h4><?=formatGameTime($viewingGame)?> <?=formatRinkName($viewingGame)?></h4>
         </header>
         <div class="playlist-container">
             <button type="button" class="backward nav-btn material-icons">arrow_left</button>
@@ -247,20 +248,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </section>
 
     <section class="highlight-form">
-        <!--
+        <? /*
             TODO:
             when edit form is open, make video play within viewport instead of fullscreen to
             allow use of controls
-         -->
+         */ ?>
         <form action="/?gameId=<?=$gameId;?>" method="POST" autocomplete="off">
             <header class="col-12">
                 <h3 class="text-center">
-                    <span class="new">New Highlight</span>
+                    <span class="new" data-toggle="collapse" data-target="#edit-form">Submit New Highlight</span>
                     <span class="update" hidden>Update Highlight</span>
-                    <button class="material-icons md-18" type="button" data-toggle="collapse" data-target="#edit-form" aria-expanded="true" aria-controls="edit-form">unfold_more</button>
+                    <button class="material-icons md-18" type="button" data-toggle="collapse" data-target="#edit-form" aria-expanded="false" aria-controls="edit-form">unfold_more</button>
                 </h3>
             </header>
-            <fieldset id="edit-form" class="collapse show">
+            <fieldset id="edit-form" class="collapse">
                 <input type="hidden" name="team" value="<?=$my_team?>" />
                 <input type="hidden" name="gameId" value="<?=$gameId?>" />
                 <input type="hidden" class="" id="startPre" name="startPre" value="">
@@ -311,7 +312,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
 
                 <div class="form-row form-group" hidden>
-                    <label for="subtype" id="subtype-label"></label>
                     <input list="subtype-values" type="text" autocomplete="off" placeholder="Description of highlight" class="form-control" id="subtype" name="subtype" required>
                     <small class="form-text text-muted">Explain the type of goal (e.g. PP, SH, EN), penalty called, great celly, etc.</small>
                     <datalist id="subtype-values"></datalist>
